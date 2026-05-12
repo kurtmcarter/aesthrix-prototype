@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aesthrix — New Patient Onboarding Flow</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Jost:wght@300;400;500&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Jost', sans-serif;
+    background: #F7F4EF;
+    color: #2C2118;
+    min-height: 100vh;
+  }
+
+  header {
+    background: #fff;
+    border-bottom: 1px solid #EDE5D8;
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .wordmark {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: 0.14em;
+    color: #2C2118;
+  }
+
+  .doc-title {
+    font-size: 13px;
+    color: #9B8778;
+    letter-spacing: 0.06em;
+  }
+
+  .meta {
+    font-size: 12px;
+    color: #9B8778;
+  }
+
+  .canvas-wrap {
+    padding: 32px 24px 64px;
+    overflow-x: auto;
+  }
+
+  .legend {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    padding: 14px 20px;
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #EDE5D8;
+    width: fit-content;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #6B5744;
+    font-weight: 500;
+  }
+
+  .legend-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  svg.flow {
+    display: block;
+    overflow: visible;
+  }
+
+  /* Node base styles */
+  .node { cursor: pointer; }
+  .node:hover rect, .node:hover polygon { opacity: 0.85; }
+
+  /* Phase label */
+  .phase-label {
+    font-size: 10px;
+    font-family: 'Jost', sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    fill: #9B8778;
+  }
+
+  /* Node text */
+  .node-title {
+    font-size: 13px;
+    font-family: 'Jost', sans-serif;
+    font-weight: 500;
+    fill: #fff;
+  }
+
+  .node-sub {
+    font-size: 11px;
+    font-family: 'Jost', sans-serif;
+    font-weight: 400;
+    fill: rgba(255,255,255,0.75);
+  }
+
+  .node-title-dark { fill: #2C2118; }
+  .node-sub-dark { fill: #6B5744; }
+
+  /* Arrow */
+  .arr {
+    stroke: #C9B99A;
+    stroke-width: 1.5;
+    fill: none;
+  }
+
+  .arr-muted {
+    stroke: #C9B99A;
+    stroke-width: 1;
+    stroke-dasharray: 4 3;
+    fill: none;
+  }
+
+  .branch-label {
+    font-size: 11px;
+    font-family: 'Jost', sans-serif;
+    fill: #9B8778;
+    font-weight: 500;
+  }
+
+  /* Tooltip */
+  #tooltip {
+    position: fixed;
+    background: #2C2118;
+    color: #fff;
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    max-width: 240px;
+    line-height: 1.5;
+    z-index: 200;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="wordmark">AESTHRIX</div>
+    <div class="doc-title" style="margin-top:2px;">New Patient Onboarding Flow</div>
+  </div>
+  <div class="meta">Cloudsoft Labs · v1 · May 2026</div>
+</header>
+
+<div id="tooltip"></div>
+
+<div class="canvas-wrap">
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#7A5AA0;"></div>Patient action</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#2A7A6A;"></div>System / app</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#B8965A;"></div>Decision point</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#C4856A;"></div>Drop-off risk</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#3A6BA0;"></div>Outcome</div>
+  </div>
+
+  <svg class="flow" width="720" viewBox="0 0 720 1680" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M2 1L8 5L2 9" fill="none" stroke="#C9B99A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </marker>
+      <marker id="arr-muted" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M2 1L8 5L2 9" fill="none" stroke="#C9B99A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </marker>
+    </defs>
+
+    <!-- ══ PHASE 1 — ENTRY POINT ══ -->
+    <text class="phase-label" x="360" y="30" text-anchor="middle">Phase 1 — Entry point</text>
+
+    <!-- START -->
+    <g class="node" data-tip="The flow begins when the clinic staff sends an invite to a new patient.">
+      <ellipse cx="360" cy="62" rx="60" ry="22" fill="#C9B99A"/>
+      <text class="node-title" x="360" y="67" text-anchor="middle" dominant-baseline="central" style="font-size:12px;">Start</text>
+    </g>
+    <line x1="360" y1="84" x2="360" y2="108" class="arr" marker-end="url(#arr)"/>
+
+    <!-- Clinic sends invite — SYSTEM -->
+    <g class="node" data-tip="Clinic staff sends a WhatsApp or SMS invite with a personalised app link. The link pre-fills the clinic ID so the patient is automatically associated on signup.">
+      <rect x="180" y="108" width="360" height="56" rx="10" fill="#2A7A6A"/>
+      <text class="node-title" x="360" y="130" text-anchor="middle" dominant-baseline="central">Clinic sends invite</text>
+      <text class="node-sub" x="360" y="149" text-anchor="middle" dominant-baseline="central">WhatsApp or SMS · personalised link with clinic ID</text>
+    </g>
+    <line x1="360" y1="164" x2="360" y2="188" class="arr" marker-end="url(#arr)"/>
+
+    <!-- Patient receives — DECISION -->
+    <g class="node" data-tip="First drop-off risk. If the message looks generic or the patient doesn't recognise the sender, they ignore it. Clinic branding in the message is critical.">
+      <polygon points="360,188 500,218 360,248 220,218" fill="#B8965A"/>
+      <text class="node-title" x="360" y="213" text-anchor="middle" dominant-baseline="central" style="font-size:12px;">Opens the link?</text>
+    </g>
+
+    <!-- No — drop-off -->
+    <line x1="220" y1="218" x2="130" y2="218" class="arr-muted" marker-end="url(#arr-muted)"/>
+    <text class="branch-label" x="175" y="210" text-anchor="middle">No</text>
+    <g class="node" data-tip="Drop-off #1 — Patient ignores. Mitigation: clinic sends a follow-up WhatsApp from the doctor personally, not a system message. Human touch converts.">
+      <rect x="30" y="194" width="100" height="48" rx="10" fill="#C4856A"/>
+      <text class="node-title" x="80" y="213" text-anchor="middle" dominant-baseline="central" style="font-size:11px;">Ignores invite</text>
+      <text class="node-sub" x="80" y="229" text-anchor="middle" dominant-baseline="central" style="font-size:10px;">Drop-off #1</text>
+    </g>
+    <!-- Retry arrow -->
+    <path d="M80 242 L80 270 L360 270 L360 248" fill="none" stroke="#C9B99A" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arr-muted)"/>
+    <text class="branch-label" x="210" y="284" text-anchor="middle" style="font-size:10px;">Auto follow-up after 24h</text>
+
+    <!-- Yes -->
+    <line x1="360" y1="248" x2="360" y2="302" class="arr" marker-end="url(#arr)"/>
+    <text class="branch-label" x="372" y="280" text-anchor="start">Yes</text>
+
+    <!-- ══ PHASE 2 — APP ACCESS ══ -->
+    <text class="phase-label" x="360" y="322" text-anchor="middle">Phase 2 — App access</text>
+
+    <g class="node" data-tip="Link opens a PWA (Progressive Web App) in the patient's browser. No App Store download required — critical for reducing friction in the Saudi market where app downloads are a known drop-off point.">
+      <rect x="180" y="332" width="360" height="56" rx="10" fill="#2A7A6A"/>
+      <text class="node-title" x="360" y="354" text-anchor="middle" dominant-baseline="central">Web app opens in browser</text>
+      <text class="node-sub" x="360" y="373" text-anchor="middle" dominant-baseline="central">PWA — no App Store required · loads in &lt;3s</text>
+    </g>
+    <line x1="360" y1="388" x2="360" y2="412" class="arr" marker-end="url(#arr)"/>
+
+    <!-- Splash -->
+    <g class="node" data-tip="The splash screen shows the clinic's branding, not generic Aesthrix branding. The patient should recognise their clinic immediately — this builds trust before they've entered a single field.">
+      <rect x="180" y="412" width="360" height="56" rx="10" fill="#2A7A6A"/>
+      <text class="node-title" x="360" y="434" text-anchor="middle" dominant-baseline="central">Clinic-branded splash screen</text>
+      <text class="node-sub" x="360" y="453" text-anchor="middle" dominant-baseline="central">Clinic logo · welcome message · language selector</text>
+    </g>
+    <line x1="360" y1="468" x2="360" y2="492" class="arr" marker-end="url(#arr)"/>
+
+    <!-- ══ PHASE 3 — ACCOUNT CREATION ══ -->
+    <text class="phase-label" x="360" y="512" text-anchor="middle">Phase 3 — Account creation</text>
+
+    <g class="node" data-tip="Patient enters their Saudi mobile number (+966). This is the primary identity — it's what the clinic already has on file, so it creates an instant match. Pre-fill the country code.">
+      <rect x="180" y="522" width="360" height="56" rx="10" fill="#7A5AA0"/>
+      <text class="node-title" x="360" y="544" text-anchor="middle" dominant-baseline="central">Patient enters mobile number</text>
+      <text class="node-sub" x="360" y="563" text-anchor="middle" dominant-baseline="central">+966 pre-filled · numeric keyboard auto-opens</text>
+    </g>
+    <line x1="360" y1="578" x2="360" y2="602" class="arr" marker-end="url(#arr)"/>
+
+    <g class="node" data-tip="OTP sent via WhatsApp — not SMS. WhatsApp is the dominant messaging channel in Saudi Arabia (>90% penetration). SMS feels archaic and is often filtered as spam.">
+      <rect x="180" y="602" width="360" height="56" rx="10" fill="#2A7A6A"/>
+      <text class="node-title" x="360" y="624" text-anchor="middle" dominant-baseline="central">OTP sent via WhatsApp</text>
+      <text class="node-sub" x="360" y="643" text-anchor="middle" dominant-baseline="central">6-digit code · 5 min expiry · auto-reads on iOS/Android</text>
+    </g>
+    <line x1="360" y1="658" x2="360" y2="682" class="arr" marker-end="url(#arr)"/>
+
+    <!-- OTP decision -->
+    <g class="node" data-tip="Second drop-off risk. OTP friction is real — expired codes, wrong numbers, delayed messages. Auto-read (SMS/WhatsApp one-tap confirm) reduces this significantly.">
+      <polygon points="360,682 500,712 360,742 220,712" fill="#B8965A"/>
+      <text class="node-title" x="360" y="707" text-anchor="middle" dominant-baseline="central" style="font-size:12px;">OTP correct?</text>
+    </g>
+
+    <!-- OTP fail -->
+    <line x1="220" y1="712" x2="130" y2="712" class="arr-muted" marker-end="url(#arr-muted)"/>
+    <text class="branch-label" x="175" y="704" text-anchor="middle">No</text>
+    <g class="node" data-tip="Drop-off #2 — OTP fails. Allow 3 attempts then offer resend. After 3 resends, surface a 'contact clinic' option. Never hard-lock — the patient has a real appointment.">
+      <rect x="30" y="688" width="100" height="48" rx="10" fill="#C4856A"/>
+      <text class="node-title" x="80" y="707" text-anchor="middle" dominant-baseline="central" style="font-size:11px;">Retry / resend</text>
+      <text class="node-sub" x="80" y="723" text-anchor="middle" dominant-baseline="central" style="font-size:10px;">Max 3 attempts</text>
+    </g>
+    <path d="M80 736 L80 760 L360 760 L360 742" fill="none" stroke="#C9B99A" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arr-muted)"/>
+
+    <!-- OTP pass -->
+    <line x1="360" y1="742" x2="360" y2="796" class="arr" marker-end="url(#arr)"/>
+    <text class="branch-label" x="372" y="774" text-anchor="start">Yes</text>
+
+    <!-- ══ PHASE 4 — PROFILE SETUP ══ -->
+    <text class="phase-label" x="360" y="816" text-anchor="middle">Phase 4 — Profile setup</text>
+
+    <g class="node" data-tip="Collect first name only at this point — enough for personalisation. Last name, DOB, and email are collected progressively after the first booking. Every extra field here costs ~10% completion.">
+      <rect x="180" y="826" width="360" height="56" rx="10" fill="#7A5AA0"/>
+      <text class="node-title" x="360" y="848" text-anchor="middle" dominant-baseline="central">Patient enters first name</text>
+      <text class="node-sub" x="360" y="867" text-anchor="middle" dominant-baseline="central">First name only · last name collected post-booking</text>
+    </g>
+    <line x1="360" y1="882" x2="360" y2="906" class="arr" marker-end="url(#arr)"/>
+
+    <!-- Language -->
+    <g class="node" data-tip="Language selection should feel like personalisation, not a form field. Show two large buttons: English and العربية. Selecting Arabic immediately flips the entire app to RTL. This moment should feel magical.">
+      <rect x="180" y="906" width="360" height="56" rx="10" fill="#7A5AA0"/>
+      <text class="node-title" x="360" y="928" text-anchor="middle" dominant-baseline="central">Chooses language</text>
+      <text class="node-sub" x="360" y="947" text-anchor="middle" dominant-baseline="central">English or العربية · RTL applied instantly</text>
+    </g>
+    <line x1="360" y1="962" x2="360" y2="986" class="arr" marker-end="url(#arr)"/>
+
+    <!-- WhatsApp consent — DECISION -->
+    <g class="node" data-tip="Legally required under Saudi PDPL before any outbound WhatsApp messaging. Frame this as a benefit — 'Get appointment reminders and aftercare tips on WhatsApp' — not as a consent checkbox. Opt-in rate should be >85% if framed correctly.">
+      <polygon points="360,986 500,1016 360,1046 220,1016" fill="#B8965A"/>
+      <text class="node-title" x="360" y="1011" text-anchor="middle" dominant-baseline="central" style="font-size:12px;">WhatsApp reminder opt-in?</text>
+    </g>
+
+    <!-- Declines -->
+    <line x1="500" y1="1016" x2="590" y2="1016" class="arr-muted" marker-end="url(#arr-muted)"/>
+    <text class="branch-label" x="540" y="1008" text-anchor="middle">Declines</text>
+    <g class="node" data-tip="Drop-off risk #3 — if patient declines WhatsApp reminders, no-show probability increases significantly. Flag this patient profile for manual clinic follow-up. Do not block progress — respect the choice.">
+      <rect x="590" y="992" width="110" height="48" rx="10" fill="#C4856A"/>
+      <text class="node-title" x="645" y="1011" text-anchor="middle" dominant-baseline="central" style="font-size:11px;">No reminders</text>
+      <text class="node-sub" x="645" y="1027" text-anchor="middle" dominant-baseline="central" style="font-size:10px;">No-show risk ↑</text>
+    </g>
+    <!-- Rejoin -->
+    <path d="M645 1040 L645 1090 L540 1090" fill="none" stroke="#C9B99A" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arr-muted)"/>
+
+    <!-- Accepts -->
+    <line x1="360" y1="1046" x2="360" y2="1080" class="arr" marker-end="url(#arr)"/>
+    <text class="branch-label" x="372" y="1068" text-anchor="start">Accepts</text>
+
+    <!-- ══ PHASE 5 — WELCOME MOMENT ══ -->
+    <text class="phase-label" x="360" y="1100" text-anchor="middle">Phase 5 — Welcome moment</text>
+
+    <g class="node" data-tip="The welcome screen is the emotional payoff of onboarding. It shows the patient's name, the clinic name, and their membership status. If the clinic has pre-loaded a booking, show it here immediately — this is the 'wow' moment that justifies the signup.">
+      <rect x="180" y="1110" width="360" height="56" rx="10" fill="#2A7A6A"/>
+      <text class="node-title" x="360" y="1132" text-anchor="middle" dominant-baseline="central">Personalised welcome screen</text>
+      <text class="node-sub" x="360" y="1151" text-anchor="middle" dominant-baseline="central">'Welcome, Layla' · clinic name · membership status</text>
+    </g>
+    <line x1="360" y1="1166" x2="360" y2="1190" class="arr" marker-end="url(#arr)"/>
+
+    <!-- Existing booking check — DECISION -->
+    <g class="node" data-tip="If the clinic pre-loaded the patient's existing appointment into the system, surface it immediately on the home screen. This is the highest-value moment — the patient instantly sees their appointment without doing anything.">
+      <polygon points="360,1190 500,1220 360,1250 220,1220" fill="#B8965A"/>
+      <text class="node-title" x="360" y="1215" text-anchor="middle" dominant-baseline="central" style="font-size:12px;">Existing appointment loaded?</text>
+    </g>
+
+    <!-- Yes — appointment shown -->
+    <line x1="500" y1="1220" x2="590" y2="1220" class="arr-muted" marker-end="url(#arr-muted)"/>
+    <text class="branch-label" x="540" y="1212" text-anchor="middle">Yes</text>
+    <g class="node" data-tip="Outcome A — Best case. Patient sees their upcoming appointment card with Confirm Attendance and Reschedule buttons. They are immediately engaged. The no-show prevention loop starts here.">
+      <rect x="590" y="1196" width="110" height="48" rx="10" fill="#3A6BA0"/>
+      <text class="node-title" x="645" y="1215" text-anchor="middle" dominant-baseline="central" style="font-size:11px;">Appointment card</text>
+      <text class="node-sub" x="645" y="1231" text-anchor="middle" dominant-baseline="central" style="font-size:10px;">Confirm or reschedule</text>
+    </g>
+
+    <!-- No — book CTA -->
+    <line x1="360" y1="1250" x2="360" y2="1294" class="arr" marker-end="url(#arr)"/>
+    <text class="branch-label" x="372" y="1276" text-anchor="start">No</text>
+
+    <!-- ══ PHASE 6 — FIRST BOOKING ══ -->
+    <text class="phase-label" x="360" y="1314" text-anchor="middle">Phase 6 — First booking</text>
+
+    <g class="node" data-tip="If no appointment is pre-loaded, guide the patient immediately to booking. Don't show an empty home screen — that's a dead end. Show a single CTA: 'Book your first treatment'. The entire booking flow should take under 3 minutes.">
+      <rect x="180" y="1324" width="360" height="56" rx="10" fill="#7A5AA0"/>
+      <text class="node-title" x="360" y="1346" text-anchor="middle" dominant-baseline="central">Patient taps 'Book your first treatment'</text>
+      <text class="node-sub" x="360" y="1365" text-anchor="middle" dominant-baseline="central">Prominent CTA · no empty home screen</text>
+    </g>
+    <line x1="360" y1="1380" x2="360" y2="1404" class="arr" marker-end="url(#arr)"/>
+
+    <g class="node" data-tip="The booking flow: choose treatment → choose provider → choose time slot → confirm. The discount slots for lower-demand times are shown here. Target: under 3 taps to a confirmed booking.">
+      <rect x="180" y="1404" width="360" height="56" rx="10" fill="#7A5AA0"/>
+      <text class="node-title" x="360" y="1426" text-anchor="middle" dominant-baseline="central">Booking flow</text>
+      <text class="node-sub" x="360" y="1445" text-anchor="middle" dominant-baseline="central">Treatment → provider → time slot → confirm</text>
+    </g>
+    <line x1="360" y1="1460" x2="360" y2="1484" class="arr" marker-end="url(#arr)"/>
+
+    <!-- Booking confirmed -->
+    <g class="node" data-tip="Booking confirmed. System immediately schedules WhatsApp reminders: 48h before and 2h before. The reminder message includes a deep-link back to the app to confirm attendance. Onboarding is complete.">
+      <rect x="180" y="1484" width="360" height="56" rx="10" fill="#2A7A6A"/>
+      <text class="node-title" x="360" y="1506" text-anchor="middle" dominant-baseline="central">Booking confirmed</text>
+      <text class="node-sub" x="360" y="1525" text-anchor="middle" dominant-baseline="central">WhatsApp reminders scheduled · 48h + 2h before</text>
+    </g>
+    <line x1="360" y1="1540" x2="360" y2="1564" class="arr" marker-end="url(#arr)"/>
+
+    <!-- END -->
+    <g class="node" data-tip="Onboarding complete. Patient is now active — they have an account, a booking, and are in the reminder loop. The no-show prevention system is live.">
+      <ellipse cx="360" cy="1588" rx="100" ry="26" fill="#C4856A"/>
+      <text class="node-title" x="360" y="1592" text-anchor="middle" dominant-baseline="central" style="font-size:12px;">Onboarding complete</text>
+    </g>
+
+  </svg>
+</div>
+
+<script>
+  const tooltip = document.getElementById('tooltip');
+  document.querySelectorAll('[data-tip]').forEach(el => {
+    el.addEventListener('mouseenter', e => {
+      tooltip.textContent = el.dataset.tip;
+      tooltip.style.opacity = '1';
+    });
+    el.addEventListener('mousemove', e => {
+      tooltip.style.left = (e.clientX + 14) + 'px';
+      tooltip.style.top = (e.clientY - 10) + 'px';
+    });
+    el.addEventListener('mouseleave', () => {
+      tooltip.style.opacity = '0';
+    });
+  });
+</script>
+
+</body>
+</html>
