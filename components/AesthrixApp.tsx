@@ -393,7 +393,7 @@ export default function AesthrixApp({ c }: { c: ThemeTokens }) {
           {/* BOTTOM NAV */}
           <div className="bottom-nav" style={{ background: c.navBg, borderTop: `1px solid ${c.navBorder}` }}>
             {navItems.map(([s, icon, label]) => (
-              <div key={s} className="nav-item" onClick={() => s !== 'profile' && setScreen(s as Screen)} style={{ background: screen === s ? `${c.navActive}22` : `${c.navInactive}18` }}>
+              <div key={s} className="nav-item" onClick={() => s !== 'profile' && setScreen(s as Screen)} style={{ background: screen === s ? `${c.navActive}22` : 'rgba(0,0,0,0.06)' }}>
                 <i className={`ti ${icon}`} style={{ color: screen === s ? c.navActive : c.navInactive }} aria-hidden="true" />
                 <span style={{ color: screen === s ? c.navActive : c.navInactive }}>{label}</span>
               </div>
