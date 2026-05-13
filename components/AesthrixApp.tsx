@@ -68,7 +68,8 @@ export default function AesthrixApp({ c }: { c: ThemeTokens }) {
           display: flex;
           justify-content: space-around;
           align-items: center;
-          padding: 14px 0 32px;
+          padding: 10px 10px 30px;
+          gap: 4px;
         }
 
         .nav-item {
@@ -77,10 +78,13 @@ export default function AesthrixApp({ c }: { c: ThemeTokens }) {
           align-items: center;
           gap: 5px;
           cursor: pointer;
-          min-width: 64px;
+          flex: 1;
+          padding: 10px 8px 8px;
+          border-radius: 18px;
+          transition: background 0.15s;
         }
-        .nav-item i { font-size: 28px; }
-        .nav-item span { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+        .nav-item i { font-size: 26px; }
+        .nav-item span { font-size: 13px; font-weight: 700; letter-spacing: 0.01em; }
 
         .hero { padding: 24px 24px 28px; position: relative; overflow: hidden; }
         .hero-greeting { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
@@ -388,7 +392,7 @@ export default function AesthrixApp({ c }: { c: ThemeTokens }) {
           {/* BOTTOM NAV */}
           <div className="bottom-nav" style={{ background: c.navBg, borderTop: `1px solid ${c.navBorder}` }}>
             {navItems.map(([s, icon, label]) => (
-              <div key={s} className="nav-item" onClick={() => s !== 'profile' && setScreen(s as Screen)}>
+              <div key={s} className="nav-item" onClick={() => s !== 'profile' && setScreen(s as Screen)} style={{ background: screen === s ? `${c.navActive}18` : 'transparent' }}>
                 <i className={`ti ${icon}`} style={{ color: screen === s ? c.navActive : c.navInactive }} aria-hidden="true" />
                 <span style={{ color: screen === s ? c.navActive : c.navInactive }}>{label}</span>
               </div>
