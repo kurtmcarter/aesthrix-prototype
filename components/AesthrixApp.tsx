@@ -68,23 +68,24 @@ export default function AesthrixApp({ c }: { c: ThemeTokens }) {
           display: flex;
           justify-content: space-around;
           align-items: center;
-          padding: 10px 10px 30px;
-          gap: 4px;
+          padding: 12px 12px 32px;
+          gap: 8px;
         }
 
         .nav-item {
           display: flex;
-          flex-direction: column;
+          flex-direction: row;
           align-items: center;
-          gap: 5px;
+          justify-content: center;
+          gap: 7px;
           cursor: pointer;
           flex: 1;
-          padding: 10px 8px 8px;
-          border-radius: 18px;
+          padding: 12px 10px;
+          border-radius: 50px;
           transition: background 0.15s;
         }
-        .nav-item i { font-size: 26px; }
-        .nav-item span { font-size: 13px; font-weight: 700; letter-spacing: 0.01em; }
+        .nav-item i { font-size: 22px; flex-shrink: 0; }
+        .nav-item span { font-size: 14px; font-weight: 700; letter-spacing: 0.01em; white-space: nowrap; }
 
         .hero { padding: 24px 24px 28px; position: relative; overflow: hidden; }
         .hero-greeting { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
@@ -392,7 +393,7 @@ export default function AesthrixApp({ c }: { c: ThemeTokens }) {
           {/* BOTTOM NAV */}
           <div className="bottom-nav" style={{ background: c.navBg, borderTop: `1px solid ${c.navBorder}` }}>
             {navItems.map(([s, icon, label]) => (
-              <div key={s} className="nav-item" onClick={() => s !== 'profile' && setScreen(s as Screen)} style={{ background: screen === s ? `${c.navActive}18` : 'transparent' }}>
+              <div key={s} className="nav-item" onClick={() => s !== 'profile' && setScreen(s as Screen)} style={{ background: screen === s ? `${c.navActive}22` : `${c.navInactive}18` }}>
                 <i className={`ti ${icon}`} style={{ color: screen === s ? c.navActive : c.navInactive }} aria-hidden="true" />
                 <span style={{ color: screen === s ? c.navActive : c.navInactive }}>{label}</span>
               </div>
